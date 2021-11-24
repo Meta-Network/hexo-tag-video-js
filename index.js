@@ -1,16 +1,15 @@
 'use strict';
 /**
- * hexo-tag-video-js
+ * hexo-tag-videojs
  * Syntax:
- * {% video-js key=value %}
+ * {% videojs key=value %}
  * Example
- * {% video-js "source=https://d2zihajmogu5jn.cloudfront.net/advanced-fmp4/master.m3u8" %}
+ * {% videojs "source=https://d2zihajmogu5jn.cloudfront.net/advanced-fmp4/master.m3u8" %}
  */
-
 const fs = require('hexo-fs');
 const path = require('path');
 const utils = require('hexo-util');
-const uuidv4 = require('uuid/v4');
+const uuid = require('uuid');
 
 /**
  * 
@@ -39,7 +38,7 @@ const getConfig = async (env) => { // videoPlayerResourcesUrl
    * From _config.yml
    */
 
-  const hexoConfig = hexo.config['hexo-tag-video-js'] || {};
+  const hexoConfig = hexo.config['hexo-tag-videojs'] || {};
   if (hexoConfig.videoPlayerResourcesUrl) {
     return videoPlayerResourcesUrl;
   }
@@ -49,7 +48,7 @@ const getConfig = async (env) => { // videoPlayerResourcesUrl
    */
 
   return [
-    'https://unpkg.com/video.js@6.7.1/dist/video-js.css',
+    'https://unpkg.com/video.js@6.7.1/dist/videojs.css',
     'https://unpkg.com/video.js@6.7.1/dist/video.js',
     'https://unpkg.com/@videojs/http-streaming@0.9.0/dist/videojs-http-streaming.js'
   ]
@@ -68,11 +67,13 @@ const getConfig = async (env) => { // videoPlayerResourcesUrl
 
 hexo.extend.filter.register('after_render:html', async (pageElements, data) => {
 
-  const config = await getConfig();
+  const env = this || undefined;
+
+  const config = await getConfig(env);
 
   const importHTMLElement = config.map((url, index) => {
 
-    if (url.search('video-js.css') != -1) {
+    if (url.search('videojs.css') != -1) {
       return `<link rel="stylesheet" href="${encodeURI(url)}">`;
     }
 
@@ -90,13 +91,14 @@ hexo.extend.filter.register('after_render:html', async (pageElements, data) => {
 
 
 /**
- * {% video-js key=value ... %}
+ * {% videojs key=value ... %}
  * "key=value" is args:
  * 
  * source: string; // url of video/stream
  * 
  */
-hexo.extend.tag.register('video-js', function (args) {
+
+const videoJSTag = (args) => {
 
   const options = {};
 
@@ -106,19 +108,20 @@ hexo.extend.tag.register('video-js', function (args) {
   });
 
   if (!options.source) return '';
-
-  const videoId = `video-js-id-${uuidv4()}`;
+  console.log(options.source);
+  const videoId = `videojs-id-${uuid.v4()}`;
   const varName = videoId.split('-').join('');
 
-  return `< div >
-  <video-js id="${videoId}" 
-    class="${utils.escapeHTML(options.type) || 'vjs-default-skin vjs-16-9'}" 
+  try {
+    const tag = `<div>
+  <videojs id="${videoId}" 
+    class="${utils.escapeHTML(options.type || 'vjs-default-skin vjs-16-9')}" 
     controls 
-    preload="${utils.escapeHTML(options.preload) || 'auto'}" 
-    width="${utils.escapeHTML(options.width) || '100%'}" 
-    height="${utils.escapeHTML(options.width) || '350px'}">
-    <source src="${encodeURI(options.source)}" type="${utils.escapeHTML(options.type) || 'application/x-mpegURL'}">
-  </video-js>
+    preload="${utils.escapeHTML(options.preload || 'auto')}" 
+    width="${utils.escapeHTML(options.width || '100%')}" 
+    height="${utils.escapeHTML(options.width || '350px')}">
+    <source src="${encodeURI(options.source)}" type="${utils.escapeHTML(options.type || 'application/x-mpegURL')}">
+  </videojs>
     
   <script>
     const ${varName} = videojs('${videoId}', {
@@ -129,5 +132,11 @@ hexo.extend.tag.register('video-js', function (args) {
       }
     });
   </script>
-  </div > `;
-});
+  </div> `;
+    return tag;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+hexo.extend.tag.register('videojs', videoJSTag);
