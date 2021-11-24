@@ -73,7 +73,7 @@ hexo.extend.filter.register('after_render:html', async (pageElements, data) => {
 
   const importHTMLElement = config.map((url, index) => {
 
-    if (url.search('videojs.css') != -1) {
+    if (url.search('video-js.css') != -1) {
       return `<link rel="stylesheet" href="${encodeURI(url)}">`;
     }
 
