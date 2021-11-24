@@ -1,4 +1,4 @@
-# hexo-tag-videojs - HTML5 Video Player for Hero.js
+# hexo-tag-videojs - HTML5 Video Player for Hexo.js
 
 🧩 Hexo  [video.js](https://videojs.com) plugin. u can embed video in ur post or page
 
