@@ -48,7 +48,7 @@ const getConfig = async (env) => { // videoPlayerResourcesUrl
    */
 
   return [
-    'https://unpkg.com/video.js@6.7.1/dist/videojs.css',
+    'https://unpkg.com/video.js@6.7.1/dist/video-js.css',
     'https://unpkg.com/video.js@6.7.1/dist/video.js',
     'https://unpkg.com/@videojs/http-streaming@0.9.0/dist/videojs-http-streaming.js'
   ]
