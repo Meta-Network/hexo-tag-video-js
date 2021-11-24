@@ -73,15 +73,11 @@ hexo.extend.filter.register('after_render:html', async (pageElements, data) => {
 
   const importHTMLElement = config.map((url, index) => {
 
-    if (url.search('video-js.css') != -1) {
+    if (url.search('.css') != -1) {
       return `<link rel="stylesheet" href="${encodeURI(url)}">`;
     }
 
-    if (url.search('video.js') != -1) {
-      return `<script src="${encodeURI(url)}"></script>`;
-    }
-
-    if (url.search('videojs-http-streaming.js') != -1) {
+    if (url.search('.js') != -1) {
       return `<script src="${encodeURI(url)}"></script>`;
     }
   });
@@ -114,14 +110,14 @@ const videoJSTag = (args) => {
 
   try {
     const tag = `<div>
-  <videojs id="${videoId}" 
+  <video-js id="${videoId}" 
     class="${utils.escapeHTML(options.type || 'vjs-default-skin vjs-16-9')}" 
     controls 
     preload="${utils.escapeHTML(options.preload || 'auto')}" 
     width="${utils.escapeHTML(options.width || '100%')}" 
     height="${utils.escapeHTML(options.width || '350px')}">
     <source src="${encodeURI(options.source)}" type="${utils.escapeHTML(options.type || 'application/x-mpegURL')}">
-  </videojs>
+  </video-js>
     
   <script>
     const ${varName} = videojs('${videoId}', {
